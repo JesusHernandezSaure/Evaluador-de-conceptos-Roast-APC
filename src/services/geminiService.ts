@@ -100,7 +100,7 @@ Analiza la propuesta y completa el scorecard para las categorías mencionadas.`;
   const generateWithRetry = async (retries = 2): Promise<any> => {
     try {
       return await ai.models.generateContent({
-        model: "gemini-3.1-pro-preview",
+        model: "gemini-3-flash-preview",
         contents: { parts },
         config: {
           systemInstruction,

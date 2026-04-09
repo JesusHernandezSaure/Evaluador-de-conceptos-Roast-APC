@@ -134,9 +134,20 @@ export default function App() {
       const evalResult = await evaluateCreative(briefData, proposalData);
       setResult(evalResult);
       setStep('results');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Hubo un error al analizar la propuesta. Por favor intenta de nuevo.');
+      let errorMessage = 'Hubo un error al analizar la propuesta. Por favor intenta de nuevo.';
+      
+      if (err?.message?.includes('API_KEY_INVALID')) {
+        errorMessage = 'La API Key configurada no es válida. Por favor revisa las variables de entorno en Vercel.';
+      } else if (err?.message?.includes('quota') || err?.message?.includes('429')) {
+        errorMessage = 'Se ha agotado la cuota de la API Key. Intenta de nuevo en unos minutos o usa otra llave.';
+      } else if (err?.message) {
+        // Show a snippet of the actual error to help debugging
+        errorMessage = `Error: ${err.message.substring(0, 100)}${err.message.length > 100 ? '...' : ''}`;
+      }
+      
+      setError(errorMessage);
       setStep('proposal');
     }
   };

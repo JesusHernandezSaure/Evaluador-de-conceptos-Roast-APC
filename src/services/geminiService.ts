@@ -1,12 +1,24 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { BriefData, ProposalData, EvaluationResult, SCENARIO_WEIGHTS } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let aiInstance: GoogleGenAI | null = null;
+
+function getAI() {
+  if (!aiInstance) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("GEMINI_API_KEY is not defined. Please set it in your environment variables.");
+    }
+    aiInstance = new GoogleGenAI({ apiKey });
+  }
+  return aiInstance;
+}
 
 export async function evaluateCreative(
   briefData: BriefData,
   proposalData: ProposalData
 ): Promise<EvaluationResult> {
+  const ai = getAI();
   const weights = SCENARIO_WEIGHTS[briefData.scenario];
   const categories = Object.keys(weights);
 
